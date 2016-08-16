@@ -50,7 +50,7 @@ if ($id == "")
 // Security check
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
-
+$hookmanager->initHooks(array('categorycard'));
 
 /*
  * Actions
@@ -152,6 +152,8 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans("In").'</td><td>';
 print $form->select_all_categories($type,$object->fk_parent,'parent',64,$object->id);
 print '</td></tr>';
+
+$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
 print '</table>';
 print '<br>';
