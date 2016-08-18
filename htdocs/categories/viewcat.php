@@ -57,6 +57,7 @@ if ($result <= 0)
 
 $type=$object->type;
 
+$hookmanager->initHooks(array('categorycard'));
 
 /*
  *	Actions
@@ -165,6 +166,8 @@ print '<tr><td width="20%" class="notopnoleft">';
 print $langs->trans("Description").'</td><td>';
 print nl2br($object->description);
 print '</td></tr>';
+
+$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);
 
 print '</table>';
 
