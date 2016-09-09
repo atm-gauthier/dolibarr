@@ -415,6 +415,8 @@ if ($id == 26)
 			'invoice_supplier_send'  => $langs->trans('MailToSendSupplierInvoice'),
 
 			'thirdparty'    => $langs->trans('MailToThirdparty')
+			
+			,'postevent' => $langs->trans('Post évenement')
 	);
 }
 // Define localtax_typeList (used for dictionnary "c_tva")
