@@ -1208,6 +1208,7 @@ UseOptionLineIfNoQuantity=Une ligne de produit/service ayant une quantité nulle
 FreeLegalTextOnProposal=Mention complémentaire sur les propositions commerciales
 WatermarkOnDraftProposal=Filigrane sur les brouillons de propositions commerciales (aucun si vide)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Saisir le compte bancaire cible lors de la proposition commerciale
+PROPOSAL_ADD_NAME_LABEL_ON_PDF=Ajouter "Prénom" et "Nom" dans le bloc signature
 ##### SupplierProposal #####
 SupplierProposalSetup=Configuration du module Demande de tarifs forunisseurs
 SupplierProposalNumberingModules=Modèles de numérotation des demandes de prix
