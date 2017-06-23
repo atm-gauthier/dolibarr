@@ -113,7 +113,7 @@ class FormProjets
 						//if (!empty($selected) && $selected == $obj->rowid && $obj->fk_statut > 0)
 						if (!empty($selected) && $selected == $obj->rowid)
 						{
-							$out.= '<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.' - '.dol_trunc($obj->title,$maxlength).'</option>';
+							$out.= '<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
 						}
 						else
 						{
