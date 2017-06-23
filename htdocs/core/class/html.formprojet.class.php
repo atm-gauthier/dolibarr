@@ -72,12 +72,13 @@ class FormProjets
 		}
 
 		// Search all projects
-		$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public';
+		$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public, s.nom';
 		$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON (s.rowid = p.fk_soc)';
 		$sql.= " WHERE p.entity = ".$conf->entity;
 		if ($projectsListId !== false) $sql.= " AND p.rowid IN (".$projectsListId.")";
 		if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
-		$sql.= " ORDER BY p.title ASC";
+		$sql.= " ORDER BY s.nom ASC, p.title DESC";
 
 		dol_syslog(get_class($this)."::select_projects sql=".$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -104,6 +105,7 @@ class FormProjets
 					else
 					{
 						$labeltoshow=dol_trunc($obj->ref,18);
+						$labeltoshow=$obj->nom . ' - ' . $obj->title;
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
 						
@@ -128,7 +130,7 @@ class FormProjets
 								//FIXME : Hack for Quimper project in Draft can be selected
 								//$disabled=1;
 								$disabled=0;
-								$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
+								//$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
 							}
 
 							if ($hideunselectables && $disabled)
@@ -142,7 +144,7 @@ class FormProjets
 								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
 								//else $labeltoshow.=' ('.$langs->trans("Private").')';
 								$resultat.='>'.$labeltoshow;
-								if (! $disabled) $resultat.=' - '.dol_trunc($obj->title,$maxlength);
+								//if (! $disabled) $resultat.=' - '.dol_trunc($obj->title,$maxlength);
 								$resultat.='</option>';
 							}
 							$out.= $resultat;
