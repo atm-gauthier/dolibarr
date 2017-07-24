@@ -1040,6 +1040,11 @@ else
         {
             print '<div class="tabsAction">';
 
+/*		$parameters=array('id'=>$id, 'objcanvas'=>$objcanvas);
+		$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been $
+		$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
+*/
+
             if ($user->rights->societe->contact->creer)
             {
                 print '<a class="butAction" href="fiche.php?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';

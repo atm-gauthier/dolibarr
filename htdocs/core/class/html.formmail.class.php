@@ -135,6 +135,7 @@ class FormMail
      */
     function add_attached_files($path,$file,$type)
     {
+
         $listofpaths=array();
         $listofnames=array();
         $listofmimes=array();

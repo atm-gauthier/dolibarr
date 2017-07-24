@@ -484,7 +484,6 @@ if (GETPOST('addfile'))
 	// Set tmp user directory TODO Use a dedicated directory for temp mails files
 	$vardir=$conf->user->dir_output."/".$user->id;
 	$upload_dir_tmp = $vardir.'/temp';
-
 	dol_add_file_process($upload_dir_tmp,0,0);
 	$action='presend';
 }
