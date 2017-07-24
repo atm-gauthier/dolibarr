@@ -382,6 +382,21 @@ else if ($action == "setabsolutediscount" && $user->rights->facture->creer)
 			if ($result < 0)
 			{
 				$mesgs[]='<div class="error">'.$object->error.'</div>';
+			} else {
+			    $outputlangs = $langs;
+			    $newlang='';
+			    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+			    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+			    if (! empty($newlang))
+			    {
+			        $outputlangs = new Translate("",$conf);
+			        $outputlangs->setDefaultLang($newlang);
+			    }
+			    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			    {
+			        $ret=$object->fetch($id);    // Reload to get new records
+			        facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			    }
 			}
 		}
 		else
@@ -399,6 +414,21 @@ else if ($action == "setabsolutediscount" && $user->rights->facture->creer)
 		if ($result < 0)
 		{
 			$mesgs[]='<div class="error">'.$discount->error.'</div>';
+		} else {
+		    $outputlangs = $langs;
+		    $newlang='';
+		    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+		    if (! empty($newlang))
+		    {
+		        $outputlangs = new Translate("",$conf);
+		        $outputlangs->setDefaultLang($newlang);
+		    }
+		    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		    {
+		        $ret=$object->fetch($id);    // Reload to get new records
+		        facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		    }
 		}
 	}
 }
@@ -756,7 +786,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			if ($id <= 0) $mesgs[]=$object->error;
 		}
 	}
-
+	
 	// Credit note invoice
 	if ($_POST['type'] == 2)
 	{
