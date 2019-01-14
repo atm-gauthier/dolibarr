@@ -1136,6 +1136,7 @@ if ($action == 'create')
 
             // Load shipments already done for same order
             $object->loadExpeditions();
+
             if ($numAsked)
             {
                 print '<tr class="liste_titre">';
@@ -1370,23 +1371,12 @@ if ($action == 'create')
 								print $staticwarehouse->getNomUrl(0).' / ';
 
 								print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
+
 								$detail='';
 								$detail.= $langs->trans("Batch").': '.$dbatch->batch;
 								$detail.= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby,"day");
 								$detail.= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby,"day");
 								$detail.= ' - '.$langs->trans("Qty").': '.$dbatch->qty;
-								
-								
-								if(!empty($dbatch->lotid)){
-									$dbatch_lot = new Productlot($db);
-									$dbatch_lot->fetch($dbatch->lotid);
-									if(!empty($dbatch_lot->array_options['options_bc2s_lot_weight'])){
-										$detail.= ' - '.$langs->trans("Weight").': '.$dbatch_lot->array_options['options_bc2s_lot_weight'];
-									}
-								}
-							
-								
-								
 								$detail.= '<br>';
 								print $detail;
 
@@ -2050,7 +2040,7 @@ else if ($id || $ref)
 		print '<br>';
 
         print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder shipping_lines" width="100%" >';
+		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		// #
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
@@ -2402,8 +2392,6 @@ else if ($id || $ref)
 								$detail.= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby,"day");
 								$detail.= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby,"day");
 								$detail.= ' - '.$langs->trans("Qty").': '.$dbatch->dluo_qty;
-								if(!empty($dbatch->bc2s_lot_weight))$detail.= ' - '.$langs->trans("Weight").': '.$dbatch->bc2s_lot_weight;
-								
 								$detail.= '<br>';
 							}
 							print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"),$detail);
@@ -2420,7 +2408,7 @@ else if ($id || $ref)
 			}
 
 			// Weight
-			print '<td align="center" class="shipping_line_weight">';
+			print '<td align="center">';
 			if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->weight*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->weight_units,"weight");
 			else print '&nbsp;';
 			print '</td>';
