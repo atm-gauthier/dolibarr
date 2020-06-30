@@ -1442,7 +1442,8 @@ if (empty($reshook))
 						if ($_POST['type'] == Facture::TYPE_DEPOSIT)
 						{
 							$typeamount = GETPOST('typedeposit', 'alpha');
-							$valuedeposit = GETPOST('valuedeposit', 'int');
+							$valuedeposit = GETPOST('valuedeposit');
+							$valuedeposit = price2num($valuedeposit, 'MU');
 
 							$amountdeposit = array();
 							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA))
@@ -1884,6 +1885,7 @@ if (empty($reshook))
 		$predef = '';
 		$product_desc = (GETPOST('dp_desc', 'none') ?GETPOST('dp_desc', 'none') : '');
 		$price_ht = GETPOST('price_ht');
+
 		$price_ht_devise = GETPOST('multicurrency_price_ht');
 		$prod_entry_mode = GETPOST('prod_entry_mode', 'alpha');
 		if ($prod_entry_mode == 'free')
