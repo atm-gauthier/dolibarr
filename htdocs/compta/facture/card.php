@@ -3423,12 +3423,12 @@ if ($action == 'create')
 
 	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
-	$form->select_types_paiements(isset($_POST['mode_reglement_id']) ? $_POST['mode_reglement_id'] : $mode_reglement_id, 'mode_reglement_id', 'CRDT');
+	$form->select_types_paiements(isset($_REQUEST['mode_reglement_id']) ? $_REQUEST['mode_reglement_id'] : $mode_reglement_id, 'mode_reglement_id', 'CRDT');
 	print '</td></tr>';
 
 	// Bank Account
-	if (isset($_POST['fk_account'])) {
-		$fk_account = $_POST['fk_account'];
+	if (isset($_REQUEST['fk_account'])) {
+		$fk_account = $_REQUEST['fk_account'];
 	}
 
 	print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
