@@ -336,7 +336,7 @@ class modWorkstation extends DolibarrModules
             'leftmenu'=>'workstation_workstation',
             'url'=>'',
             // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'langs'=>'workstation@workstation',
+            'langs'=>'mrp',
             'position'=>1100+$r,
             // Define condition to show or hide menu entry. Use '$conf->workstation->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
             'enabled'=>'$conf->workstation->enabled',
@@ -356,7 +356,7 @@ class modWorkstation extends DolibarrModules
 			'leftmenu'=>'workstation_workstation_left_create',
 			'url'=>'/workstation/workstation_card.php?action=create',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs'=>'workstation@workstation',
+			'langs'=>'mrp',
 			'position'=>1100+$r,
 			// Define condition to show or hide menu entry. Use '$conf->workstation->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled'=>'$conf->workstation->enabled',
@@ -376,7 +376,7 @@ class modWorkstation extends DolibarrModules
 			'leftmenu'=>'workstation_workstation_left_list',
 			'url'=>'/workstation/workstation_list.php',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs'=>'workstation@workstation',
+			'langs'=>'mrp',
 			'position'=>1101+$r,
 			// Define condition to show or hide menu entry. Use '$conf->workstation->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled'=>'$conf->workstation->enabled',
