@@ -81,11 +81,19 @@ if ($action == 'setdatev' && $user->rights->tax->charges->creer)
     $action = '';
 }
 
+if ($action == 'setbankaccount' && $user->rights->tax->charges->creer) {
+	$object->fetch($id);
+	$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
+
 if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
     $error = 0;
 
-    $object->accountid = GETPOST("accountid", 'int');
+    $object->fk_account = GETPOST("accountid", 'int');
     $object->type_payment = GETPOST("type_payment", 'alphanohtml');
 	$object->num_payment = GETPOST("num_payment", 'alphanohtml');
 
@@ -123,21 +131,9 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 
 	if (!$error)
 	{
-		$db->begin();
-
-    	$ret = $object->addPayment($user);
-		if ($ret > 0)
-		{
-			$db->commit();
-			header("Location: list.php");
-			exit;
-		}
-		else
-		{
-			$db->rollback();
-			setEventMessages($object->error, $object->errors, 'errors');
-			$action = "create";
-		}
+		$ret = $object->create($user);
+		header("Location: card.php?id=".$object->id);
+		exit;
 	}
 
 	$action = 'create';
@@ -276,23 +272,23 @@ if ($action == 'create')
 	// Amount
 	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount", "alpha").'"></td></tr>';
 
-    if (!empty($conf->banque->enabled))
-    {
-		print '<tr><td class="fieldrequired">'.$langs->trans("BankAccount").'</td><td>';
-		$form->select_comptes(GETPOST("accountid", 'int'), "accountid", 0, "courant=1", 2); // List of bank account available
-        print '</td></tr>';
-    }
-
     // Type payment
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
 	$form->select_types_paiements(GETPOST("type_payment"), "type_payment");
 	print "</td>\n";
 	print "</tr>";
 
+	if (!empty($conf->banque->enabled))
+	{
+		print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
+		$form->select_comptes(GETPOST("accountid", 'int'), "accountid", 0, "courant=1", 1); // List of bank account available
+		print '</td></tr>';
+	}
+
 	// Number
-	print '<tr><td>'.$langs->trans('Numero');
+	/*print '<tr><td>'.$langs->trans('Numero');
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
-	print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
+	print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";*/
 
     // Other attributes
     $parameters = array();
@@ -354,18 +350,21 @@ if ($id)
 
 	if (!empty($conf->banque->enabled))
 	{
-		if ($object->fk_account > 0)
-		{
-			$bankline = new AccountLine($db);
-			$bankline->fetch($object->fk_bank);
-
-			print '<tr>';
-			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-			print '<td>';
-			print $bankline->getNomUrl(1, 0, 'showall');
-			print '</td>';
-			print '</tr>';
+		print '<tr><td class="nowrap">';
+		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+		print $langs->trans('BankAccount');
+		print '<td>';
+		if ($action != 'editbankaccount' && $user->rights->tax->charges->creer)
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+		print '</tr></table>';
+		print '</td><td>';
+		if ($action == 'editbankaccount') {
+			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+		} else {
+			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
 		}
+		print '</td>';
+		print '</tr>';
 	}
 
 	// Other attributes

@@ -103,7 +103,8 @@ class Tva extends CommonObject
 		$this->amount = trim($this->amount);
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
-		$this->fk_bank = (int) $this->fk_bank;
+		//$this->fk_bank = (int) $this->fk_bank;
+		$this->fk_account = (int) $this->fk_account;
 		$this->fk_user_creat = (int) $this->fk_user_creat;
 		$this->fk_user_modif = (int) $this->fk_user_modif;
 
@@ -120,7 +121,7 @@ class Tva extends CommonObject
 		$sql .= "amount,";
 		$sql .= "label,";
 		$sql .= "note,";
-		$sql .= "fk_bank,";
+		$sql .= "fk_account,";
 		$sql .= "fk_user_creat,";
 		$sql .= "fk_user_modif";
         $sql .= ") VALUES (";
@@ -130,7 +131,7 @@ class Tva extends CommonObject
 		$sql .= " '".$this->db->escape($this->amount)."',";
 		$sql .= " '".$this->db->escape($this->label)."',";
 		$sql .= " '".$this->db->escape($this->note)."',";
-		$sql .= " ".($this->fk_bank <= 0 ? "NULL" : "'".$this->db->escape($this->fk_bank)."'").",";
+		$sql .= " '".$this->db->escape($this->fk_account)."',";
 		$sql .= " '".$this->db->escape($this->fk_user_creat)."',";
 		$sql .= " '".$this->db->escape($this->fk_user_modif)."'";
 		$sql .= ")";
@@ -182,7 +183,6 @@ class Tva extends CommonObject
 		$this->amount = trim($this->amount);
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
-		$this->fk_bank = (int) $this->fk_bank;
 		$this->fk_user_creat = (int) $this->fk_user_creat;
 		$this->fk_user_modif = (int) $this->fk_user_modif;
 
@@ -199,7 +199,6 @@ class Tva extends CommonObject
 		$sql .= " amount=".price2num($this->amount).",";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " note='".$this->db->escape($this->note)."',";
-		$sql .= " fk_bank=".$this->fk_bank.",";
 		$sql .= " fk_user_creat=".$this->fk_user_creat.",";
 		$sql .= " fk_user_modif=".($this->fk_user_modif > 0 ? $this->fk_user_modif : $user->id)."";
         $sql .= " WHERE rowid=".$this->id;
@@ -254,15 +253,14 @@ class Tva extends CommonObject
 		$sql .= " t.num_payment,";
 		$sql .= " t.label,";
 		$sql .= " t.note,";
-		$sql .= " t.fk_bank,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
-		$sql .= " b.fk_account,";
-		$sql .= " b.fk_type,";
-		$sql .= " b.rappro";
+		$sql .= " t.fk_account";
+		//$sql .= " b.fk_type,";
+		//$sql .= " b.rappro";
 
         $sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
+		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
         $sql .= " WHERE t.rowid = ".$id;
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -283,7 +281,6 @@ class Tva extends CommonObject
 				$this->num_payment = $obj->num_payment;
 				$this->label = $obj->label;
 				$this->note  = $obj->note;
-				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->fk_account = $obj->fk_account;
