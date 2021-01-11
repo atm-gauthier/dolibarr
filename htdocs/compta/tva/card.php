@@ -327,6 +327,7 @@ if ($id)
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 
 	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border centpercent">';
@@ -375,6 +376,122 @@ if ($id)
 	print '</table>';
 
 	print '</div>';
+
+	print '<div class="fichehalfright">';
+	print '<div class="ficheaddleft">';
+
+	$nbcols = 3;
+	if (!empty($conf->banque->enabled)) {
+		$nbcols++;
+	}
+
+	/*
+	 * Payments
+	 */
+	$sql = "SELECT p.rowid, p.num_paiement as num_payment, datep as dp, p.amount,";
+	$sql .= " c.code as type_code,c.libelle as paiement_type,";
+	$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.currency_code as bacurrency_code, ba.fk_accountancy_journal';
+	$sql .= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepaiement = c.id";
+	$sql .= ", ".MAIN_DB_PREFIX."chargesociales as cs";
+	$sql .= " WHERE p.fk_charge = ".$id;
+	$sql .= " AND p.fk_charge = cs.rowid";
+	$sql .= " AND cs.entity IN (".getEntity('tax').")";
+	$sql .= " ORDER BY dp DESC";
+
+	//print $sql;
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$totalpaye = 0;
+
+		$num = $db->num_rows($resql);
+		$i = 0; $total = 0;
+
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<table class="noborder paymenttable">';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("RefPayment").'</td>';
+		print '<td>'.$langs->trans("Date").'</td>';
+		print '<td>'.$langs->trans("Type").'</td>';
+		if (!empty($conf->banque->enabled)) {
+			print '<td class="liste_titre right">'.$langs->trans('BankAccount').'</td>';
+		}
+		print '<td class="right">'.$langs->trans("Amount").'</td>';
+		print '</tr>';
+
+		if ($num > 0)
+		{
+			$bankaccountstatic = new Account($db);
+			while ($i < $num)
+			{
+				$objp = $db->fetch_object($resql);
+
+				print '<tr class="oddeven"><td>';
+				print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
+				print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
+				$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
+				print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
+				if (!empty($conf->banque->enabled))
+				{
+					$bankaccountstatic->id = $objp->baid;
+					$bankaccountstatic->ref = $objp->baref;
+					$bankaccountstatic->label = $objp->baref;
+					$bankaccountstatic->number = $objp->banumber;
+					$bankaccountstatic->currency_code = $objp->bacurrency_code;
+
+					if (!empty($conf->accounting->enabled)) {
+						$bankaccountstatic->account_number = $objp->account_number;
+
+						$accountingjournal = new AccountingJournal($db);
+						$accountingjournal->fetch($objp->fk_accountancy_journal);
+						$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+					}
+
+					print '<td class="right">';
+					if ($bankaccountstatic->id)
+						print $bankaccountstatic->getNomUrl(1, 'transactions');
+					print '</td>';
+				}
+				print '<td class="right">'.price($objp->amount)."</td>\n";
+				print "</tr>";
+				$totalpaye += $objp->amount;
+				$i++;
+			}
+		}
+		else
+		{
+			print '<tr class="oddeven"><td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
+			print '<td></td><td></td><td></td><td></td>';
+			print '</tr>';
+		}
+
+		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid")." :</td><td class=\"right\">".price($totalpaye)."</td></tr>\n";
+		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected")." :</td><td class=\"right\">".price($object->amount)."</td></tr>\n";
+
+		$resteapayer = $object->amount - $totalpaye;
+		$cssforamountpaymentcomplete = 'amountpaymentcomplete';
+
+		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
+		print '<td class="right'.($resteapayer ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayer)."</td></tr>\n";
+
+		print "</table>";
+		print '</div>';
+
+		$db->free($resql);
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+
+	print '</div>';
+	print '</div>';
+	print '</div>';
+
+	print '<div class="clearboth"></div>';
 
 	dol_fiche_end();
 
