@@ -221,9 +221,12 @@ dol_fiche_end();
  */
 
 $disable_delete = 0;
-$sql = 'SELECT f.rowid as scid, f.label as label, f.paye, f.amount as tva_amount, pf.amount, pc.libelle as sc_type';
-$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementtva as pf,'.MAIN_DB_PREFIX.'tva as f, '.MAIN_DB_PREFIX.'c_chargesociales as pc';
-$sql .= ' WHERE pf.fk_tva = f.rowid AND f.fk_type = pc.id';
+$sql = 'SELECT f.rowid as scid, f.label as label, f.paye, f.amount as tva_amount, pf.amount';
+//$sql .= ', pc.libelle as sc_type';
+$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementtva as pf,'.MAIN_DB_PREFIX.'tva as f';
+//$sql .= ', '.MAIN_DB_PREFIX.'c_chargesociales as pc';
+$sql .= ' WHERE pf.fk_tva = f.rowid';
+//$sql .= ' AND f.fk_type = pc.id';
 $sql .= ' AND f.entity = '.$conf->entity;
 $sql .= ' AND pf.rowid = '.$object->id;
 
@@ -238,7 +241,7 @@ if ($resql)
 	print '<br><table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('TVA').'</td>';
-    print '<td>'.$langs->trans('Type').'</td>';
+    //print '<td>'.$langs->trans('Type').'</td>';
 	print '<td>'.$langs->trans('Label').'</td>';
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td class="center">'.$langs->trans('Status').'</td>';
@@ -258,10 +261,9 @@ if ($resql)
 			print $tva->getNomUrl(1);
 			print "</td>\n";
 			// Type
-            print '<td>';
-            print $tva->type_label;
-            /*print $tva->type;*/
-            print "</td>\n";
+           /* print '<td>';
+            print $tva->type_label;4
+            print "</td>\n";*/
 			// Label
 			print '<td>'.$objp->label.'</td>';
 			// Expected to pay

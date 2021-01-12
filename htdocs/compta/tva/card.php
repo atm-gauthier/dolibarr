@@ -35,6 +35,7 @@ $langs->loadLangs(array('compta', 'banks', 'bills'));
 
 $id = GETPOST("id", 'int');
 $action = GETPOST("action", "alpha");
+$confirm = GETPOST('confirm');
 $refund = GETPOST("refund", "int");
 if (empty($refund)) $refund = 0;
 
@@ -192,6 +193,60 @@ if ($action == 'delete')
 	}
 }
 
+// Action clone object
+if ($action == 'confirm_clone' && $confirm != 'yes') { $action = ''; }
+
+if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->charges->creer))
+{
+	$db->begin();
+
+	$originalId = $id;
+
+	$object->fetch($id);
+
+	if ($object->id > 0)
+	{
+		$object->paye = 0;
+		$object->id = $object->ref = null;
+
+		if (GETPOST('clone_label', 'alphanohtml')) {
+			$object->label = GETPOST('clone_label', 'alphanohtml');
+		}
+		else {
+			$object->label = $langs->trans("CopyOf").' '.$object->label;
+		}
+
+		$newdateperiod = dol_mktime(0, 0, 0, GETPOST('clone_periodmonth', 'int'), GETPOST('clone_periodday', 'int'), GETPOST('clone_periodyear', 'int'));
+		$newdateech = dol_mktime(0, 0, 0, GETPOST('clone_date_echmonth', 'int'), GETPOST('clone_date_echday', 'int'), GETPOST('clone_date_echyear', 'int'));
+		if ($newdateperiod) $object->periode = $newdateperiod;
+		if ($newdateech) $object->date_ech = $newdateech;
+
+		//if ($object->check()) {
+		$id = $object->create($user);
+		if ($id > 0)
+		{
+			$db->commit();
+			$db->close();
+
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+			exit;
+		}
+		else
+		{
+			$id = $originalId;
+			$db->rollback();
+
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		//}
+	}
+	else
+	{
+		$db->rollback();
+		dol_print_error($db, $object->error);
+	}
+}
+
 
 /*
  *	View
@@ -321,6 +376,19 @@ if ($action == 'create')
 if ($id)
 {
 	$head = vat_prepare_head($object);
+
+	// Clone confirmation
+	if ($action === 'clone')
+	{
+		$formquestion = array(
+			array('type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans("Label"), 'value' => $langs->trans("CopyOf").' '.$object->label),
+		);
+
+		//$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
+		$formquestion[] = array('type' => 'date', 'name' => 'clone_period', 'label' => $langs->trans("PeriodEndDate"), 'value' => -1);
+
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneTVA', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 240);
+	}
 
 	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment');
 
@@ -530,13 +598,13 @@ if ($id)
 		// Reopen
 		if ($object->paye && $user->rights->tax->charges->creer)
 		{
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/card.php", 1)."?id=$object->id&amp;action=reopen\">".$langs->trans("ReOpen")."</a></div>";
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/compta/tva/card.php", 1)."?id=$object->id&amp;action=reopen\">".$langs->trans("ReOpen")."</a></div>";
 		}
 
 		// Edit
 		if ($object->paye == 0 && $user->rights->tax->charges->creer)
 		{
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a></div>";
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/tva/card.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a></div>";
 		}
 
 		// Emit payment
@@ -548,13 +616,13 @@ if ($id)
 		// Classify 'paid'
 		if ($object->paye == 0 && round($resteapayer) <= 0 && $user->rights->tax->charges->creer)
 		{
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a></div>";
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/tva/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a></div>";
 		}
 
 		// Clone
 		if ($user->rights->tax->charges->creer)
 		{
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/card.php", 1)."?id=$object->id&amp;action=clone\">".$langs->trans("ToClone")."</a></div>";
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/compta/tva/card.php", 1)."?id=$object->id&amp;action=clone\">".$langs->trans("ToClone")."</a></div>";
 		}
 
 		if (!empty($user->rights->tax->charges->supprimer))
