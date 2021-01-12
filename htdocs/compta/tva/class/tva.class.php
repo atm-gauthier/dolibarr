@@ -102,6 +102,7 @@ class Tva extends CommonObject
 		// Clean parameters
 		$this->amount = trim($this->amount);
 		$this->label = trim($this->label);
+		$this->type_payment = (int) $this->type_payment;
 		$this->note = trim($this->note);
 		//$this->fk_bank = (int) $this->fk_bank;
 		$this->fk_account = (int) $this->fk_account;
@@ -122,6 +123,7 @@ class Tva extends CommonObject
 		$sql .= "label,";
 		$sql .= "note,";
 		$sql .= "fk_account,";
+		$sql .= "fk_typepayment,";
 		$sql .= "fk_user_creat,";
 		$sql .= "fk_user_modif";
         $sql .= ") VALUES (";
@@ -132,6 +134,7 @@ class Tva extends CommonObject
 		$sql .= " '".$this->db->escape($this->label)."',";
 		$sql .= " '".$this->db->escape($this->note)."',";
 		$sql .= " '".$this->db->escape($this->fk_account)."',";
+		$sql .= " '".$this->db->escape($this->type_payment)."',";
 		$sql .= " '".$this->db->escape($this->fk_user_creat)."',";
 		$sql .= " '".$this->db->escape($this->fk_user_modif)."'";
 		$sql .= ")";

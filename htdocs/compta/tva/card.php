@@ -81,6 +81,15 @@ if ($action == 'setdatev' && $user->rights->tax->charges->creer)
     $action = '';
 }
 
+// payment mode
+if ($action == 'setmode' && $user->rights->tax->charges->creer) {
+	$object->fetch($id);
+	$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
+	if ($result < 0)
+		setEventMessages($object->error, $object->errors, 'errors');
+}
+
+// Bank account
 if ($action == 'setbankaccount' && $user->rights->tax->charges->creer) {
 	$object->fetch($id);
 	$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
@@ -349,6 +358,23 @@ if ($id)
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
 
+	// Mode of payment
+	print '<tr><td>';
+	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print $langs->trans('PaymentMode');
+	print '</td>';
+	if ($action != 'editmode')
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td>';
+	if ($action == 'editmode') {
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->type_payment, 'mode_reglement_id');
+	} else {
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->type_payment, 'none');
+	}
+	print '</td></tr>';
+
+	// Bank account
 	if (!empty($conf->banque->enabled))
 	{
 		print '<tr><td class="nowrap">';
@@ -430,7 +456,7 @@ if ($id)
 				$objp = $db->fetch_object($resql);
 
 				print '<tr class="oddeven"><td>';
-				print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
+				print '<a href="'.DOL_URL_ROOT.'/compta/payment_tva/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 				$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 				print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
