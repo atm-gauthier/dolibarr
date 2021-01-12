@@ -75,6 +75,10 @@ class Tva extends CommonObject
      */
 	public $fk_user_modif;
 
+
+	const STATUS_UNPAID = 0;
+	const STATUS_PAID = 1;
+
     /**
 	 *	Constructor
 	 *
@@ -771,8 +775,8 @@ class Tva extends CommonObject
      */
     public function getSommePaiement()
     {
-        $table = 'paiementcharge';
-        $field = 'fk_charge';
+        $table = 'paiementtva';
+        $field = 'fk_tva';
 
         $sql = 'SELECT sum(amount) as amount';
         $sql .= ' FROM '.MAIN_DB_PREFIX.$table;
@@ -844,29 +848,54 @@ class Tva extends CommonObject
 	}
 
 	/**
-	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *  Retourne le libelle du statut d'une TVA (impaye, payee)
 	 *
-	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * @return  string				Libelle
+	 *  @param	int		$mode       	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
+	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @return	string        			Label
 	 */
-	public function getLibStatut($mode = 0)
+	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
-	    return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->paye, $mode, $alreadypaid);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Renvoi le libelle d'un statut donne
+	 *  Renvoi le libelle d'un statut donne
 	 *
-	 * @param   int		$status     Statut
-	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * @return	string  		    Libelle du statut
+	 *  @param	int		$status        	Id status
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
+	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @return string        			Label
 	 */
-    public function LibStatut($status, $mode = 0)
-    {
-        // phpcs:enable
-        global $langs; // TODO Renvoyer le libelle anglais et faire traduction a affichage
+	public function LibStatut($status, $mode = 0, $alreadypaid = -1)
+	{
+		// phpcs:enable
+		global $langs;
 
-        return '';
-    }
+		// Load translation files required by the page
+		$langs->loadLangs(array("customers", "bills"));
+
+		// We reinit status array to force to redefine them because label may change according to properties values.
+		$this->labelStatus = array();
+		$this->labelStatusShort = array();
+
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
+		{
+			global $langs;
+			//$langs->load("mymodule");
+			$this->labelStatus[self::STATUS_UNPAID] = $langs->trans('Unpaid');
+			$this->labelStatus[self::STATUS_PAID] = $langs->trans('Paid');
+			if ($status == self::STATUS_UNPAID && $alreadypaid > 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('Unpaid');
+			$this->labelStatusShort[self::STATUS_PAID] = $langs->trans('Paid');
+			if ($status == self::STATUS_UNPAID && $alreadypaid > 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+		}
+
+		$statusType = 'status1';
+		if ($status == 0 && $alreadypaid > 0) $statusType = 'status3';
+		if ($status == 1) $statusType = 'status6';
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+	}
 }

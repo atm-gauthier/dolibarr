@@ -705,7 +705,7 @@ class PaymentTVA extends CommonObject
         $label = $langs->trans("ShowPayment").': '.$this->ref;
 
         if (!empty($this->id)) {
-            $link = '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+            $link = '<a href="'.DOL_URL_ROOT.'/compta/payment_tva/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
             $linkend = '</a>';
 
             if ($withpicto) $result .= ($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');

@@ -64,7 +64,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->char
 	if ($result > 0)
 	{
         $db->commit();
-        header("Location: ".DOL_URL_ROOT."/compta/sociales/payments.php?mode=sconly");
+        header("Location: ".DOL_URL_ROOT."/compta/tva/payments.php?mode=sconly");
         exit;
 	}
 	else
@@ -161,7 +161,7 @@ if ($action == 'valide')
 */
 
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/compta/sociales/payments.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/payments.php">'.$langs->trans("BackToList").'</a>';
 
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'id', '');
 
