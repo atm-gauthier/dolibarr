@@ -234,6 +234,40 @@ class Tva extends CommonObject
     	}
     }
 
+	/**
+	 *    Tag TVA as payed completely
+	 *
+	 *    @param    User    $user       Object user making change
+	 *    @return   int					<0 if KO, >0 if OK
+	 */
+	public function set_paid($user)
+	{
+		// phpcs:enable
+		$sql = "UPDATE ".MAIN_DB_PREFIX."tva SET";
+		$sql .= " paye = 1";
+		$sql .= " WHERE rowid = ".$this->id;
+		$return = $this->db->query($sql);
+		if ($return) return 1;
+		else return -1;
+	}
+
+	/**
+	 *    Remove tag payed on TVA
+	 *
+	 *    @param	User	$user       Object user making change
+	 *    @return	int					<0 if KO, >0 if OK
+	 */
+	public function set_unpaid($user)
+	{
+		// phpcs:enable
+		$sql = "UPDATE ".MAIN_DB_PREFIX."tva SET";
+		$sql .= " paye = 0";
+		$sql .= " WHERE rowid = ".$this->id;
+		$return = $this->db->query($sql);
+		if ($return) return 1;
+		else return -1;
+	}
+
 
     /**
      *  Load object in memory from database
@@ -256,6 +290,7 @@ class Tva extends CommonObject
 		$sql .= " t.num_payment,";
 		$sql .= " t.label,";
 		$sql .= " t.note,";
+		$sql .= " t.paye,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.fk_account";
@@ -283,6 +318,7 @@ class Tva extends CommonObject
 				$this->type_payment = $obj->fk_typepayment;
 				$this->num_payment = $obj->num_payment;
 				$this->label = $obj->label;
+				$this->paye  = $obj->paye;
 				$this->note  = $obj->note;
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;

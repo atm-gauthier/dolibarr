@@ -211,7 +211,7 @@ if ($action == 'create')
 
 	$sql = "SELECT sum(p.amount) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."paiementtva as p";
-	$sql .= " WHERE p.fk_charge = ".$chid;
+	$sql .= " WHERE p.fk_tva = ".$chid;
 	$resql = $db->query($sql);
 	if ($resql)
 	{

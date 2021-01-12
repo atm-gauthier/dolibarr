@@ -99,6 +99,28 @@ if ($action == 'setbankaccount' && $user->rights->tax->charges->creer) {
 	}
 }
 
+// Classify paid
+if ($action == 'confirm_paid' && $user->rights->tax->charges->creer && $confirm == 'yes')
+{
+	$object->fetch($id);
+	$result = $object->set_paid($user);
+}
+
+if ($action == 'reopen' && $user->rights->tax->charges->creer) {
+	$result = $object->fetch($id);
+	if ($object->paye)
+	{
+		$result = $object->set_unpaid($user);
+		if ($result > 0)
+		{
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+			exit();
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+}
+
 if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
     $error = 0;
@@ -247,7 +269,6 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 	}
 }
 
-
 /*
  *	View
  */
@@ -388,6 +409,12 @@ if ($id)
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_period', 'label' => $langs->trans("PeriodEndDate"), 'value' => -1);
 
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneTVA', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 240);
+	}
+
+	if ($action == 'paid')
+	{
+		$text = $langs->trans('ConfirmPayTVA');
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans('PayTVA'), $text, "confirm_paid", '', '', 2);
 	}
 
 	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment');
