@@ -388,17 +388,17 @@ if ($id)
 	/*
 	 * Payments
 	 */
-	$sql = "SELECT p.rowid, p.num_paiement as num_payment, datep as dp, p.amount,";
+	$sql = "SELECT p.rowid, p.num_paiement as num_payment, p.datep as dp, p.amount,";
 	$sql .= " c.code as type_code,c.libelle as paiement_type,";
 	$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.currency_code as bacurrency_code, ba.fk_accountancy_journal';
-	$sql .= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
+	$sql .= " FROM ".MAIN_DB_PREFIX."paiementtva as p";
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepaiement = c.id";
-	$sql .= ", ".MAIN_DB_PREFIX."chargesociales as cs";
-	$sql .= " WHERE p.fk_charge = ".$id;
-	$sql .= " AND p.fk_charge = cs.rowid";
-	$sql .= " AND cs.entity IN (".getEntity('tax').")";
+	$sql .= ", ".MAIN_DB_PREFIX."tva as tva";
+	$sql .= " WHERE p.fk_tva = ".$id;
+	$sql .= " AND p.fk_tva = tva.rowid";
+	$sql .= " AND tva.entity IN (".getEntity('tax').")";
 	$sql .= " ORDER BY dp DESC";
 
 	//print $sql;
@@ -501,6 +501,36 @@ if ($id)
 	print "<div class=\"tabsAction\">\n";
 	if ($object->rappro == 0)
 	{
+		// Reopen
+		if ($object->paye && $user->rights->tax->charges->creer)
+		{
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/card.php", 1)."?id=$object->id&amp;action=reopen\">".$langs->trans("ReOpen")."</a></div>";
+		}
+
+		// Edit
+		if ($object->paye == 0 && $user->rights->tax->charges->creer)
+		{
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a></div>";
+		}
+
+		// Emit payment
+		if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->rights->tax->charges->creer)
+		{
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/paiement_tva.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a></div>";
+		}
+
+		// Classify 'paid'
+		if ($object->paye == 0 && round($resteapayer) <= 0 && $user->rights->tax->charges->creer)
+		{
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a></div>";
+		}
+
+		// Clone
+		if ($user->rights->tax->charges->creer)
+		{
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/card.php", 1)."?id=$object->id&amp;action=clone\">".$langs->trans("ToClone")."</a></div>";
+		}
+
 		if (!empty($user->rights->tax->charges->supprimer))
 		{
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
