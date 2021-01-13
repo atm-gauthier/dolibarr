@@ -66,9 +66,9 @@ $tva = new Tva($db);
 $payment_vat_static = new PaymentVAT($db);
 $sal_static = new PaymentSalary($db);
 
-llxHeader('', $langs->trans("SpecialExpensesArea"));
+llxHeader('', $langs->trans("VATExpensesArea"));
 
-$title = $langs->trans("SpecialExpensesArea");
+$title = $langs->trans("VATArea");
 if ($mode == 'tvaonly') $title = $langs->trans("VATPayments");
 
 $param = '';

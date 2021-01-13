@@ -280,9 +280,9 @@ if ($action == 'create')
 
 		print '<tr class="oddeven">';
 
-		if ($objp->date_ech > 0)
+		if ($objp->datev > 0)
 		{
-			print '<td class="left">'.dol_print_date($objp->date_ech, 'day').'</td>'."\n";
+			print '<td class="left">'.dol_print_date($objp->datev, 'day').'</td>'."\n";
 		}
 		else
 		{

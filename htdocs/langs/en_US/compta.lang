@@ -65,6 +65,7 @@ LT2SupplierIN=SGST purchases
 VATCollected=VAT collected
 StatusToPay=To pay
 SpecialExpensesArea=Area for all special payments
+VATExpensesArea=Area for all TVA payments
 SocialContribution=Social or fiscal tax
 SocialContributions=Social or fiscal taxes
 SocialContributionsDeductibles=Deductible social or fiscal taxes

@@ -65,6 +65,7 @@ LT2SupplierIN=TVA sur les achats
 VATCollected=TVA récupérée
 StatusToPay=A payer
 SpecialExpensesArea=Espace des paiements particuliers
+VATExpensesArea=Espace des paiements de TVA
 SocialContribution=Charge sociale ou fiscale
 SocialContributions=Charges fiscales ou sociales
 SocialContributionsDeductibles=Charge ou taxe déductible
