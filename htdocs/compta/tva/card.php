@@ -641,7 +641,7 @@ if ($id)
 		// Emit payment
 		if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->rights->tax->charges->creer)
 		{
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/paiement_tva.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a></div>";
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/paiement_vat.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a></div>";
 		}
 
 		// Classify 'paid'
