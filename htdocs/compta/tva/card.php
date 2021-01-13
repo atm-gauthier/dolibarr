@@ -239,9 +239,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 		}
 
 		$newdateperiod = dol_mktime(0, 0, 0, GETPOST('clone_periodmonth', 'int'), GETPOST('clone_periodday', 'int'), GETPOST('clone_periodyear', 'int'));
-		$newdateech = dol_mktime(0, 0, 0, GETPOST('clone_date_echmonth', 'int'), GETPOST('clone_date_echday', 'int'), GETPOST('clone_date_echyear', 'int'));
-		if ($newdateperiod) $object->periode = $newdateperiod;
-		if ($newdateech) $object->date_ech = $newdateech;
+		if ($newdateperiod) $object->datev = $newdateperiod;
 
 		//if ($object->check()) {
 		$id = $object->create($user);
