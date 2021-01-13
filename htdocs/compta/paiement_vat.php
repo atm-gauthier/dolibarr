@@ -24,7 +24,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymenttva.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
@@ -104,7 +104,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
     		$db->begin();
 
     		// Create a line of payments
-    		$paiement = new PaymentTVA($db);
+    		$paiement = new PaymentVAT($db);
     		$paiement->chid         = $chid;
     		$paiement->datepaye     = $datepaye;
     		$paiement->amounts      = $amounts; // Tableau de montant
@@ -126,7 +126,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 
             if (!$error)
             {
-                $result = $paiement->addPaymentToBank($user, 'payment_sc', '(SocialContributionPayment)', GETPOST('accountid', 'int'), '', '');
+                $result = $paiement->addPaymentToBank($user, 'payment_vat', '(SocialContributionPayment)', GETPOST('accountid', 'int'), '', '');
                 if (!($result > 0))
                 {
                 	$error++;

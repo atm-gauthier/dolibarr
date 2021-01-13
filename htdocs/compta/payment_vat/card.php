@@ -19,7 +19,7 @@
  */
 
 /**
- *	    \file       htdocs/compta/payment_tva/card.php
+ *	    \file       htdocs/compta/payment_vat/card.php
  *		\ingroup    facture
  *		\brief      Onglet payment of a social contribution
  *		\remarks	Fichier presque identique a fournisseur/paiement/card.php
@@ -27,7 +27,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymenttva.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 if (!empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -43,7 +43,7 @@ if ($user->socid) $socid = $user->socid;
 // TODO ajouter regle pour restreindre acces paiement
 //$result = restrictedArea($user, 'facture', $id,'');
 
-$object = new PaymentTVA($db);
+$object = new PaymentVAT($db);
 if ($id > 0)
 {
 	$result = $object->fetch($id);
@@ -64,7 +64,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->char
 	if ($result > 0)
 	{
         $db->commit();
-        header("Location: ".DOL_URL_ROOT."/compta/tva/payments.php?mode=sconly");
+        header("Location: ".DOL_URL_ROOT."/compta/tva/payments.php?mode=tvaonly");
         exit;
 	}
 	else
@@ -127,8 +127,8 @@ $form = new Form($db);
 
 $h = 0;
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/payment_tva/card.php?id='.$id;
-$head[$h][1] = $langs->trans("PaymentTVA");
+$head[$h][0] = DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$id;
+$head[$h][1] = $langs->trans("PaymentVAT");
 $hselected = $h;
 $h++;
 
@@ -138,7 +138,7 @@ $h++;
 */
 
 
-dol_fiche_head($head, $hselected, $langs->trans("PaymentTVA"), -1, 'payment');
+dol_fiche_head($head, $hselected, $langs->trans("PaymentVAT"), -1, 'payment');
 
 /*
  * Deletion confirmation of payment
@@ -230,7 +230,7 @@ $sql .= ' WHERE pf.fk_tva = f.rowid';
 $sql .= ' AND f.entity = '.$conf->entity;
 $sql .= ' AND pf.rowid = '.$object->id;
 
-dol_syslog("compta/payment_tva/card.php", LOG_DEBUG);
+dol_syslog("compta/payment_vat/card.php", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {

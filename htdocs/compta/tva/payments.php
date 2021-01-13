@@ -29,7 +29,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymenttva.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -43,7 +43,7 @@ $result = restrictedArea($user, 'tax|salaries', '', '', 'charges|');
 $mode = GETPOST("mode", 'alpha');
 $year = GETPOST("year", 'int');
 $filtre = GETPOST("filtre", 'alpha');
-if (!$year && $mode != 'sconly') { $year = date("Y", time()); }
+if (!$year && $mode != 'tvaonly') { $year = date("Y", time()); }
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -63,18 +63,18 @@ if (!$sortorder) $sortorder = "DESC";
 
 $tva_static = new Tva($db);
 $tva = new Tva($db);
-$payment_tva_static = new PaymentTVA($db);
+$payment_vat_static = new PaymentVAT($db);
 $sal_static = new PaymentSalary($db);
 
 llxHeader('', $langs->trans("SpecialExpensesArea"));
 
 $title = $langs->trans("SpecialExpensesArea");
-if ($mode == 'sconly') $title = $langs->trans("TVAPayments");
+if ($mode == 'tvaonly') $title = $langs->trans("TVAPayments");
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
-if ($mode == 'sconly') $param = '&mode=sconly';
+if ($mode == 'tvaonly') $param = '&mode=tvaonly';
 if ($sortfield) $param .= '&sortfield='.$sortfield;
 if ($sortorder) $param .= '&sortorder='.$sortorder;
 
@@ -88,7 +88,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
-if ($mode != 'sconly')
+if ($mode != 'tvaonly')
 {
     $center = ($year ? '<a href="list.php?year='.($year - 1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="list.php?year='.($year + 1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>" : "");
     print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'title_accountancy', 0, '', '', $limit, 1);
@@ -100,7 +100,7 @@ else
 
 if ($year) $param .= '&year='.$year;
 
-if ($mode != 'sconly')
+if ($mode != 'tvaonly')
 {
 	print $langs->trans("DescTaxAndDividendsArea").'<br>';
 	print "<br>";
@@ -109,7 +109,7 @@ if ($mode != 'sconly')
 if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 {
 	// Social contributions only
-	if ($mode != 'sconly')
+	if ($mode != 'tvaonly')
 	{
 		print load_fiche_titre($langs->trans("TVAPayments").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
 	}
@@ -163,12 +163,12 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		{
 			$obj = $db->fetch_object($resql);
 
-			$payment_tva_static->id = $obj->pid;
-			$payment_tva_static->ref = $obj->pid;
+			$payment_vat_static->id = $obj->pid;
+			$payment_vat_static->ref = $obj->pid;
 
 			print '<tr class="oddeven">';
 			// Ref payment
-			print '<td>'.$payment_tva_static->getNomUrl(1)."</td>\n";
+			print '<td>'.$payment_vat_static->getNomUrl(1)."</td>\n";
 			// Date payment
 			print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day').'</td>';
 	        // Type payment
@@ -219,7 +219,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 // VAT
 if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 {
-	if (!$mode || $mode != 'sconly')
+	if (!$mode || $mode != 'tvaonly')
 	{
 		print "<br>";
 
@@ -319,7 +319,7 @@ else
 
 while ($j < $numlt)
 {
-	if (!$mode || $mode != 'sconly')
+	if (!$mode || $mode != 'tvaonly')
 	{
 		print "<br>";
 
@@ -401,7 +401,7 @@ while ($j < $numlt)
 // Payment Salary
 if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
 {
-    if (!$mode || $mode != 'sconly')
+    if (!$mode || $mode != 'tvaonly')
     {
         $sal = new PaymentSalary($db);
 

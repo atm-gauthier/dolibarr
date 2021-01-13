@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 /**
  *	Class to manage payments of social contributions
  */
-class PaymentTVA extends CommonObject
+class PaymentVAT extends CommonObject
 {
 	/**
 	 * @var string ID to identify managed object
@@ -206,7 +206,7 @@ class PaymentTVA extends CommonObject
 			}
 		}
 
-		$result = $this->call_trigger('PAYMENTTVA_CREATE', $user);
+		$result = $this->call_trigger('PAYMENTVAT_CREATE', $user);
 		if ($result < 0) $error++;
 
 		if ($totalamount != 0 && !$error)
@@ -557,7 +557,7 @@ class PaymentTVA extends CommonObject
 
                 // Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
                 $url = '';
-                if ($mode == 'payment_sc') $url = DOL_URL_ROOT.'/compta/payment_sc/card.php?id=';
+                if ($mode == 'payment_vat') $url = DOL_URL_ROOT.'/compta/payment_vat/card.php?id=';
                 if ($url)
                 {
                     $result = $acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
@@ -705,7 +705,7 @@ class PaymentTVA extends CommonObject
         $label = $langs->trans("ShowPayment").': '.$this->ref;
 
         if (!empty($this->id)) {
-            $link = '<a href="'.DOL_URL_ROOT.'/compta/payment_tva/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+            $link = '<a href="'.DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
             $linkend = '</a>';
 
             if ($withpicto) $result .= ($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
