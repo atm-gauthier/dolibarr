@@ -387,7 +387,7 @@ if ($result)
                 }
                 elseif ($links[$key]['type'] == 'payment_vat') {
                     print '<a href="'.DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('VAT'), 'payment').' ';
+                    print img_object($langs->trans('VATDeclaration'), 'payment').' ';
                     print $langs->trans("VATPayment");
                     print '</a>';
                 }

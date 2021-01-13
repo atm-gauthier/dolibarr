@@ -128,7 +128,7 @@ $form = new Form($db);
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$id;
-$head[$h][1] = $langs->trans("PaymentVAT");
+$head[$h][1] = $langs->trans("VATPayment");
 $hselected = $h;
 $h++;
 

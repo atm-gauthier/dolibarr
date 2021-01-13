@@ -98,7 +98,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
  * View
  */
 
-llxHeader('', $langs->trans("VATPayments"));
+llxHeader('', $langs->trans("VATDeclarations"));
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -161,7 +161,7 @@ if ($result)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	print_barre_liste($langs->trans("VATPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($langs->trans("VATDeclarations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
