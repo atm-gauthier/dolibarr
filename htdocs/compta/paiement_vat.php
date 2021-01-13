@@ -126,7 +126,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 
             if (!$error)
             {
-                $result = $paiement->addPaymentToBank($user, 'payment_vat', '(SocialContributionPayment)', GETPOST('accountid', 'int'), '', '');
+                $result = $paiement->addPaymentToBank($user, 'payment_vat', '(VATPayment)', GETPOST('accountid', 'int'), '', '');
                 if (!($result > 0))
                 {
                 	$error++;

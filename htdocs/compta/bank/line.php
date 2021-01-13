@@ -367,12 +367,18 @@ if ($result)
                     $societe->fetch($links[$key]['url_id']);
                     print $societe->getNomUrl(1);
                 }
-                elseif ($links[$key]['type'] == 'sc') {
-                    print '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('SocialContribution'), 'bill').' ';
-                    print $langs->trans("SocialContribution").($links[$key]['label'] ? ' - '.$links[$key]['label'] : '');
-                    print '</a>';
-                }
+				elseif ($links[$key]['type'] == 'sc') {
+					print '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$links[$key]['url_id'].'">';
+					print img_object($langs->trans('SocialContribution'), 'bill').' ';
+					print $langs->trans("SocialContribution").($links[$key]['label'] ? ' - '.$links[$key]['label'] : '');
+					print '</a>';
+				}
+				elseif ($links[$key]['type'] == 'vat') {
+					print '<a href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$links[$key]['url_id'].'">';
+					print img_object($langs->trans('TVA'), 'bill').' ';
+					print $langs->trans("TVA").($links[$key]['label'] ? ' - '.$links[$key]['label'] : '');
+					print '</a>';
+				}
                 elseif ($links[$key]['type'] == 'payment_sc') {
                     print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('Payment'), 'payment').' ';
@@ -380,7 +386,7 @@ if ($result)
                     print '</a>';
                 }
                 elseif ($links[$key]['type'] == 'payment_vat') {
-                    print '<a href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$links[$key]['url_id'].'">';
+                    print '<a href="'.DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$links[$key]['url_id'].'">';
                     print img_object($langs->trans('VAT'), 'payment').' ';
                     print $langs->trans("VATPayment");
                     print '</a>';

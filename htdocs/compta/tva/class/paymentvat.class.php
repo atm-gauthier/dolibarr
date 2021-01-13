@@ -572,11 +572,11 @@ class PaymentVAT extends CommonObject
                 $linkaddedforthirdparty = array();
                 foreach ($this->amounts as $key => $value)
                 {
-                    if ($mode == 'payment_sc')
+                    if ($mode == 'payment_vat')
                     {
-                        $socialcontrib = new Tva($this->db);
-                        $socialcontrib->fetch($key);
-                        $result = $acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/tvas.php?id=', $socialcontrib->type_label.(($socialcontrib->lib && $socialcontrib->lib != $socialcontrib->type_label) ? ' ('.$socialcontrib->lib.')' : ''), 'sc');
+                        $tva = new Tva($this->db);
+                        $tva->fetch($key);
+                        $result = $acc->add_url_line($bank_line_id, $tva->id, DOL_URL_ROOT.'/compta/tvas.php?id=', $tva->type_label.(($tva->lib && $tva->lib != $tva->type_label) ? ' ('.$tva->lib.')' : ''), 'vat');
                         if ($result <= 0) dol_print_error($this->db);
                     }
                 }
