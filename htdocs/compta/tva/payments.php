@@ -69,7 +69,7 @@ $sal_static = new PaymentSalary($db);
 llxHeader('', $langs->trans("SpecialExpensesArea"));
 
 $title = $langs->trans("SpecialExpensesArea");
-if ($mode == 'tvaonly') $title = $langs->trans("TVAPayments");
+if ($mode == 'tvaonly') $title = $langs->trans("VATPayments");
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
@@ -111,7 +111,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	// Social contributions only
 	if ($mode != 'tvaonly')
 	{
-		print load_fiche_titre($langs->trans("TVAPayments").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
+		print load_fiche_titre($langs->trans("VATPayments").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
 	}
 
 	print '<table class="noborder centpercent">';
@@ -119,15 +119,15 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "ptva.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "ptva.datep", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("LabelContrib", $_SERVER["PHP_SELF"], "c.libelle", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("TypeContrib", $_SERVER["PHP_SELF"], "tva.fk_type", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("LabelContrib", $_SERVER["PHP_SELF"], "tva.label", "", $param, '', $sortfield, $sortorder);
+	//print_liste_field_titre("TypeContrib", $_SERVER["PHP_SELF"], "tva.fk_type", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "tva.date_ech", "", $param, 'width="140px"', $sortfield, $sortorder);
 	print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "tva.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "ptva.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print "</tr>\n";
 
 	$sql = "SELECT tva.rowid, tva.label as label";
-	//$sql .= ", tva.periode, tva.date_ech";
+	$sql .= ", tva.datev";
 	$sql .= ", tva.amount as total,";
 	$sql .= " ptva.rowid as pid, ptva.datep, ptva.amount as totalpaye, ptva.num_paiement as num_payment,";
 	$sql .= " pct.code as payment_code";
@@ -141,8 +141,8 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		$sql .= " AND (";
 		// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
 		// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
-		$sql .= "   (tva.periode IS NOT NULL AND tva.periode between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
-		$sql .= " OR (tva.periode IS NULL AND tva.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
+		$sql .= "   (tva.datev IS NOT NULL AND tva.datev between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
+		$sql .= " OR (tva.datev IS NULL AND tva.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= ")";
 	}
 	if (preg_match('/^cs\./', $sortfield) || preg_match('/^c\./', $sortfield) || preg_match('/^pc\./', $sortfield) || preg_match('/^pct\./', $sortfield)) $sql .= $db->order($sortfield, $sortorder);
@@ -183,10 +183,9 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			print $tva->getNomUrl(1, '20');
 			print '</td>';
 			// Type
-			print '<td><a href="../tva/list.php?filtre=tva.fk_type:'.$obj->type.'">'.$obj->type_label.'</a></td>';
+			//print '<td><a href="../tva/list.php?filtre=tva.fk_type:'.$obj->type.'">'.$obj->type_label.'</a></td>';
 			// Date
-			$date = $obj->periode;
-			if (empty($date)) $date = $obj->date_ech;
+			$date = $obj->datev;
 			print '<td>'.dol_print_date($date, 'day').'</td>';
 			// Expected to pay
 			print '<td class="right">'.price($obj->total).'</td>';
@@ -203,7 +202,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		}
 	    print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
 	    print '<td class="liste_total right"></td>'; // A total here has no sense
-	    print '<td align="center" class="liste_total">&nbsp;</td>';
+	    //print '<td align="center" class="liste_total">&nbsp;</td>';
 	    print '<td align="center" class="liste_total">&nbsp;</td>';
 	    print '<td align="center" class="liste_total">&nbsp;</td>';
 	    print '<td class="liste_total right">'.price($totalpaye)."</td>";

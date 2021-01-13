@@ -196,12 +196,12 @@ if ($result)
 	$form->select_types_paiements($typeid, 'typeid', '', 0, 1, 1, 16);
 	print '</td>';
 	// Account
-	if (!empty($conf->banque->enabled))
+	/*if (!empty($conf->banque->enabled))
     {
 	    print '<td class="liste_titre">';
 	    $form->select_comptes($search_account, 'search_account', 0, '', 1);
 	    print '</td>';
-    }
+    }*/
 	// Amount
 	print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
     print '<td class="liste_titre maxwidthsearch">';
@@ -216,7 +216,7 @@ if ($result)
 	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "t.datev", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "t.datep", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'left ');
-	if (!empty($conf->banque->enabled)) print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+	//if (!empty($conf->banque->enabled)) print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "t.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
@@ -250,7 +250,7 @@ if ($result)
         // Type
 		print $type;
 		// Account
-    	if (!empty($conf->banque->enabled))
+    	/*if (!empty($conf->banque->enabled))
 	    {
 	        print '<td>';
 	        if ($obj->fk_bank > 0)
@@ -269,7 +269,7 @@ if ($result)
 			}
 			else print '&nbsp;';
 			print '</td>';
-		}
+		}*/
 		// Amount
         $total = $total + $obj->amount;
 		print '<td class="nowrap right">'.price($obj->amount)."</td>";
@@ -279,7 +279,7 @@ if ($result)
         $i++;
     }
 
-    $colspan = 5;
+    $colspan = 4;
     if (!empty($conf->banque->enabled)) $colspan++;
     print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Total").'</td>';
     print '<td class="right">'.price($total).'</td>';
