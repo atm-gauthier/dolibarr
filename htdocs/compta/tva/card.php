@@ -531,10 +531,10 @@ if ($id)
 	// Label
 	//print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
 
-	print "<tr>";
+	/*print "<tr>";
 	print '<td class="titlefield">'.$langs->trans("DatePayment").'</td><td>';
 	print dol_print_date($object->datep, 'day');
-	print '</td></tr>';
+	print '</td></tr>';*/
 
 	print '<tr><td>';
 	print $form->editfieldkey($form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")), 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
