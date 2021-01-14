@@ -181,12 +181,12 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 
 			// Create a line of payments
 			$paiement = new PaymentVAT($db);
-			$paiement->chid         = $id;
+			$paiement->chid         = $object->id;
 			$paiement->datepaye     = $datep;
 			$paiement->amounts      = array($object->id=>$amount); // Tableau de montant
 			$paiement->paiementtype = GETPOST("type_payment", 'alphanohtml');
 			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
-			$paiement->note_private = GETPOST("note", 'none');
+			$paiement->note = GETPOST("note", 'none');
 
 			if (!$error)
 			{
@@ -368,11 +368,9 @@ if ($action == 'create')
 						$("#label_fk_account").removeClass("fieldrequired");
 						$(".hide_if_no_auto_create_payment").hide();
 					}
-				});
+				});';
 
-				';
-
-		if($_REQUEST['action'] === 'add') {
+		if($_REQUEST['action'] === 'add') { // form has been send but there is at least one error
 			if(empty($auto_create_payment)) {
 				print '$("#label_fk_account").removeClass("fieldrequired");
 					   $(".hide_if_no_auto_create_payment").hide();';
