@@ -47,6 +47,7 @@ $search_dateend_end = dol_mktime(23, 59, 59, GETPOST('search_dateend_endmonth', 
 $search_datepayment_start = dol_mktime(0, 0, 0, GETPOST('search_datepayment_startmonth', 'int'), GETPOST('search_datepayment_startday', 'int'), GETPOST('search_datepayment_startyear', 'int'));
 $search_datepayment_end = dol_mktime(23, 59, 59, GETPOST('search_datepayment_endmonth', 'int'), GETPOST('search_datepayment_endday', 'int'), GETPOST('search_datepayment_endyear', 'int'));
 $search_amount = GETPOST('search_amount', 'alpha');
+$search_status = GETPOST('search_status', 'int');
 $month = GETPOST("month", "int");
 $year = GETPOST("year", "int");
 
@@ -88,6 +89,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_datepayment_end = '';
 	$search_account = '';
 	$search_amount = "";
+	$search_status = '';
 	$year = "";
 	$month = "";
     $typeid = "";
@@ -105,10 +107,11 @@ $formother = new FormOther($db);
 $tva_static = new Tva($db);
 $bankstatic = new Account($db);
 
-$sql = "SELECT t.rowid, t.amount, t.label, t.datev, t.datep, t.fk_typepayment as type, t.num_payment, pst.code as payment_code";
-//$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel";
+$sql = "SELECT t.rowid, t.amount, t.label, t.datev, t.datep, t.paye, t.fk_typepayment as type, t.num_payment, pst.code as payment_code, ";
+$sql .= " SUM(ptva.amount) as alreadypayed";
 $sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON t.fk_typepayment = pst.id";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementtva as ptva ON ptva.fk_tva = t.rowid";
 //$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
 //$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
 $sql .= " WHERE t.entity IN (".getEntity('tax').")";
@@ -116,6 +119,7 @@ if ($search_ref)				$sql .= natural_search("t.rowid", $search_ref);
 if ($search_label)				$sql .= natural_search("t.label", $search_label);
 if ($search_account > 0)		$sql .= " AND b.fk_account=".$search_account;
 if ($search_amount)				$sql .= natural_search("t.amount", price2num(trim($search_amount)), 1);
+if ($search_status != '' && $search_status >= 0) $sql .= " AND t.paye = ".$db->escape($search_status);
 if ($search_dateend_start)		$sql .= " AND t.datev >= '".$db->idate($search_dateend_start)."'";
 if ($search_dateend_end)		$sql .= " AND t.datev <= '".$db->idate($search_dateend_end)."'";
 if ($search_datepayment_start)  $sql .= " AND t.datep >= '".$db->idate($search_datepayment_start)."'";
@@ -127,6 +131,7 @@ if ($filtre) {
 if ($typeid) {
     $sql .= " AND t.fk_typepayment=".$typeid;
 }
+$sql .= " GROUP BY t.rowid, t.amount, t.datev, t.label, t.paye";
 $sql .= $db->order($sortfield, $sortorder);
 $totalnboflines = 0;
 $result = $db->query($sql);
@@ -144,9 +149,15 @@ if ($result)
     $total = 0;
 
 	$param = '';
-    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 	if ($typeid) $param .= '&amp;typeid='.$typeid;
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+	if ($search_ref)    $param .= '&search_ref='.urlencode($search_ref);
+	if ($search_label)  $param .= '&search_label='.urlencode($search_label);
+	if ($search_project_ref >= 0) $param .= "&search_project_ref=".urlencode($search_project_ref);
+	if ($search_amount) $param .= '&search_amount='.urlencode($search_amount);
+	if ($search_typeid) $param .= '&search_typeid='.urlencode($search_typeid);
+	if ($search_status != '' && $search_status != '-1') $param .= '&search_status='.urlencode($search_status);
 
 	$newcardbutton = '';
 	if ($user->rights->tax->charges->creer)
@@ -182,7 +193,7 @@ if ($result)
 	print $form->selectDate($search_dateend_end ? $search_dateend_end : -1, 'search_dateend_end', 0, 0, 1);
 	print '</div>';
 	// Date payment
-	print '<td class="liste_titre center">';
+	/*print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
 	print $langs->trans('From').' ';
 	print $form->selectDate($search_datepayment_start ? $search_datepayment_start : -1, 'search_datepayment_start', 0, 0, 1);
@@ -190,7 +201,7 @@ if ($result)
 	print '<div class="nowrap">';
 	print $langs->trans('to').' ';
 	print $form->selectDate($search_datepayment_end ? $search_datepayment_end : -1, 'search_datepayment_end', 0, 0, 1);
-	print '</div>';
+	print '</div>';*/
 	// Type
 	print '<td class="liste_titre left">';
 	$form->select_types_paiements($typeid, 'typeid', '', 0, 1, 1, 16);
@@ -204,20 +215,29 @@ if ($result)
     }*/
 	// Amount
 	print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
+
+	// Status
+	print '<td class="liste_titre maxwidthonsmartphone right">';
+	$liststatus = array('0'=>$langs->trans("Unpaid"), '1'=>$langs->trans("Paid"));
+	print $form->selectarray('search_status', $liststatus, $search_status, 1);
+	print '</td>';
+
     print '<td class="liste_titre maxwidthsearch">';
     $searchpicto = $form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
+
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "t.rowid", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "t.label", "", $param, 'align="left"', $sortfield, $sortorder);
 	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "t.datev", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "t.datep", "", $param, 'align="center"', $sortfield, $sortorder);
+	//print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "t.datep", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'left ');
 	//if (!empty($conf->banque->enabled)) print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "t.amount", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "t.paye", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -246,7 +266,7 @@ if ($result)
 		// Date end period
         print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
         // Date payment
-        print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+        //print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
         // Type
 		print $type;
 		// Account
@@ -273,8 +293,11 @@ if ($result)
 		// Amount
         $total = $total + $obj->amount;
 		print '<td class="nowrap right">'.price($obj->amount)."</td>";
-	    print "<td>&nbsp;</td>";
-        print "</tr>\n";
+
+        print '<td class="nowrap right">'.$tva_static->LibStatut($obj->paye, 5, $obj->alreadypayed).'</td>';
+		if (!$i) $totalarray['nbfield']++;
+
+		print "<td>&nbsp;</td>";
 
         $i++;
     }
