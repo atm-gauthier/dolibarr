@@ -27,6 +27,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 
@@ -37,6 +38,8 @@ $id = GETPOST("id", 'int');
 $action = GETPOST("action", "alpha");
 $confirm = GETPOST('confirm');
 $refund = GETPOST("refund", "int");
+$auto_create_payment = GETPOST("auto_create_paiement", "int");
+
 if (empty($refund)) $refund = 0;
 
 $datev = dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
@@ -160,12 +163,65 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 		$error++;
 	}
+	if (!empty($auto_create_payment) && ($object->fk_account <= 0))
+	{
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("AccountToCredit")), null, 'errors');
+		$error++;
+	}
 
 	if (!$error)
 	{
 		$ret = $object->create($user);
-		header("Location: card.php?id=".$object->id);
-		exit;
+		if($ret < 0) $error++;
+
+		// Auto create payment
+		if (!empty($auto_create_payment) && !$error)
+		{
+			$db->begin();
+
+			// Create a line of payments
+			$paiement = new PaymentVAT($db);
+			$paiement->chid         = $id;
+			$paiement->datepaye     = $datep;
+			$paiement->amounts      = array($object->id=>$amount); // Tableau de montant
+			$paiement->paiementtype = GETPOST("type_payment", 'alphanohtml');
+			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
+			$paiement->note_private = GETPOST("note", 'none');
+
+			if (!$error)
+			{
+				$paymentid = $paiement->create($user, (int)GETPOST('closepaidtva'));
+				if ($paymentid < 0)
+				{
+					$error++;
+					setEventMessages($paiement->error, null, 'errors');
+					$action = 'create';
+				}
+			}
+
+			if (!$error)
+			{
+				$result = $paiement->addPaymentToBank($user, 'payment_vat', '(VATPayment)', GETPOST('accountid', 'int'), '', '');
+				if (!($result > 0))
+				{
+					$error++;
+					setEventMessages($paiement->error, null, 'errors');
+				}
+			}
+
+			if (!$error)
+			{
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}
+		}
+		if(empty($error)) {
+			header("Location: card.php?id=" . $object->id);
+			exit;
+		}
 	}
 
 	$action = 'create';
@@ -292,7 +348,6 @@ if ($id)
 if ($action == 'create')
 {
 	print load_fiche_titre($langs->trans("VAT").' - '.$langs->trans("New"));
-
 	if (!empty($conf->use_javascript_ajax))
     {
         print "\n".'<script type="text/javascript" language="javascript">';
@@ -305,7 +360,29 @@ if ($action == 'create')
                     $("#label").val($(this).data("label"));
 
                 });
-        });';
+				$("#auto_create_paiement").click(function() {
+					if($(this).is(":checked")) {
+						$("#label_fk_account").addClass("fieldrequired");
+						$(".hide_if_no_auto_create_payment").show();
+					} else {
+						$("#label_fk_account").removeClass("fieldrequired");
+						$(".hide_if_no_auto_create_payment").hide();
+					}
+				});
+
+				';
+
+		if($_REQUEST['action'] === 'add') {
+			if(empty($auto_create_payment)) {
+				print '$("#label_fk_account").removeClass("fieldrequired");
+					   $(".hide_if_no_auto_create_payment").hide();';
+			} else {
+				print '$("#label_fk_account").addClass("fieldrequired");
+					   $(".hide_if_no_auto_create_payment").show();';
+			}
+		}
+
+        print '});';
 		print '</script>'."\n";
 	}
 
@@ -363,20 +440,35 @@ if ($action == 'create')
 
 	if (!empty($conf->banque->enabled))
 	{
-		print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
+		print '<tr><td class="fieldrequired" id="label_fk_account">'.$langs->trans("BankAccount").'</td><td>';
 		$form->select_comptes(GETPOST("accountid", 'int'), "accountid", 0, "courant=1", 1); // List of bank account available
 		print '</td></tr>';
 	}
 
+	// Auto create payment
+	print '<tr><td>'.$langs->trans('CreatePaymentAuto').'</td>';
+	print '<td><input id="auto_create_paiement" name="auto_create_paiement" type="checkbox" '.($_REQUEST['action'] === 'add' ? (empty($auto_create_payment) ? '' : 'checked="checked"') : 'checked="checked"').' value="1"></td></tr>'."\n";
+
 	// Number
-	/*print '<tr><td>'.$langs->trans('Numero');
+	print '<tr class="hide_if_no_auto_create_payment"><td>'.$langs->trans('Numero');
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
-	print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";*/
+	print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
+
+	// Comments
+	print '<tr class="hide_if_no_auto_create_payment">';
+	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
+	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
+	print '</tr>';
 
     // Other attributes
     $parameters = array();
     $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
+
+	// Bouton Save payment
+	print '<tr class="hide_if_no_auto_create_payment"><td>';
+	print $langs->trans("ClosePaidTVAAutomatically");
+	print '</td><td><input type="checkbox" checked value="1" name="closepaidtva"></td></tr>';
 
     print '</table>';
 
