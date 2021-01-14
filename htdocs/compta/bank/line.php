@@ -375,8 +375,8 @@ if ($result)
 				}
 				elseif ($links[$key]['type'] == 'vat') {
 					print '<a href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$links[$key]['url_id'].'">';
-					print img_object($langs->trans('TVA'), 'bill').' ';
-					print $langs->trans("TVA").($links[$key]['label'] ? ' - '.$links[$key]['label'] : '');
+					print img_object($langs->trans('VATDeclaration'), 'bill').' ';
+					print $langs->trans("VATDeclaration").($links[$key]['label'] ? '&nbsp;'.$links[$key]['label'] : '');
 					print '</a>';
 				}
                 elseif ($links[$key]['type'] == 'payment_sc') {
@@ -387,7 +387,7 @@ if ($result)
                 }
                 elseif ($links[$key]['type'] == 'payment_vat') {
                     print '<a href="'.DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('VATDeclaration'), 'payment').' ';
+                    print img_object($langs->trans('VATPayment'), 'payment').' ';
                     print $langs->trans("VATPayment");
                     print '</a>';
                 }

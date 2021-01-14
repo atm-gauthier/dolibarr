@@ -126,7 +126,7 @@ class PaymentVAT extends CommonObject
 		// Validate parametres
 		if (!$this->datepaye)
 		{
-			$this->error = 'ErrorBadValueForParameterCreatePaymentSocialContrib';
+			$this->error = 'ErrorBadValueForParameterCreatePaymentVAT';
 			return -1;
 		}
 
@@ -576,7 +576,7 @@ class PaymentVAT extends CommonObject
                     {
                         $tva = new Tva($this->db);
                         $tva->fetch($key);
-                        $result = $acc->add_url_line($bank_line_id, $tva->id, DOL_URL_ROOT.'/compta/tvas.php?id=', $tva->type_label.(($tva->lib && $tva->lib != $tva->type_label) ? ' ('.$tva->lib.')' : ''), 'vat');
+                        $result = $acc->add_url_line($bank_line_id, $tva->id, DOL_URL_ROOT.'/compta/tvas.php?id=', '('.$tva->label.')', 'vat');
                         if ($result <= 0) dol_print_error($this->db);
                     }
                 }

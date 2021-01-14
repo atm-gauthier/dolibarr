@@ -166,7 +166,7 @@ if ($action == 'create')
 	$tva = new Tva($db);
 	$tva->fetch($chid);
 	$tva->accountid = $tva->fk_account ? $tva->fk_account : $tva->accountid;
-	$tva->paiementtype = $tva->mode_reglement_id ? $tva->mode_reglement_id : $tva->paiementtype;
+	$tva->paiementtype = $tva->type_payment;
 
 	$total = $tva->amount;
 	if (!empty($conf->use_javascript_ajax))
