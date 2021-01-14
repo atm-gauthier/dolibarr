@@ -444,7 +444,7 @@ if ($action == 'create')
 	}
 
 	// Auto create payment
-	print '<tr><td>'.$langs->trans('CreatePaymentAuto').'</td>';
+	print '<tr><td>'.$langs->trans('AutomaticCreationPayment').'</td>';
 	print '<td><input id="auto_create_paiement" name="auto_create_paiement" type="checkbox" '.($_REQUEST['action'] === 'add' ? (empty($auto_create_payment) ? '' : 'checked="checked"') : 'checked="checked"').' value="1"></td></tr>'."\n";
 
 	// Number

@@ -85,6 +85,7 @@ PaymentCustomerInvoice=Règlement facture client
 PaymentSupplierInvoice=Règlement facture fournisseur
 PaymentSocialContribution=Paiement de charges fiscales/sociales
 PaymentVat=Règlement TVA
+AutomaticCreationPayment=Créer automatiquement un règlement total
 ListPayment=Liste des règlements
 ListOfCustomerPayments=Liste des règlements clients
 ListOfSupplierPayments=Liste des règlements fournisseurs
