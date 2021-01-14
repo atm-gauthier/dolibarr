@@ -410,12 +410,12 @@ if ($action == 'create')
 
     print '<table class="border centpercent">';
 
-    print "<tr>";
-    print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
+    print '<tr class="hide_if_no_auto_create_payment">';
+    print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
     print $form->selectDate($datep, "datep", '', '', '', 'add', 1, 1);
     print '</td></tr>';
 
-    print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
+    print '<tr><td class="titlefieldcreate fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
     print $form->selectDate((GETPOST("datevmonth", 'int') ? $datev : -1), "datev", '', '', '', 'add', 1, 1);
     print '</td></tr>';
 
