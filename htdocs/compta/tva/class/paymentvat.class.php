@@ -529,7 +529,7 @@ class PaymentVAT extends CommonObject
             $acc->fetch($accountid);
 
             $total = $this->total;
-            if ($mode == 'payment_sc') $total = -$total;
+            if ($mode == 'payment_vat') $total = -$total;
 
             // Insert payment into llx_bank
             $bank_line_id = $acc->addline(
