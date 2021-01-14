@@ -121,7 +121,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("LabelContrib", $_SERVER["PHP_SELF"], "tva.label", "", $param, '', $sortfield, $sortorder);
 	//print_liste_field_titre("TypeContrib", $_SERVER["PHP_SELF"], "tva.fk_type", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "tva.date_ech", "", $param, 'width="140px"', $sortfield, $sortorder);
+	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "tva.datev", "", $param, 'width="140px"', $sortfield, $sortorder);
 	print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "tva.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "ptva.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print "</tr>\n";
@@ -145,7 +145,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		$sql .= " OR (tva.datev IS NULL AND tva.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= ")";
 	}
-	if (preg_match('/^cs\./', $sortfield) || preg_match('/^c\./', $sortfield) || preg_match('/^pc\./', $sortfield) || preg_match('/^pct\./', $sortfield)) $sql .= $db->order($sortfield, $sortorder);
+	if (preg_match('/^cs\./', $sortfield) || preg_match('/^tva\./', $sortfield) || preg_match('/^ptva\./', $sortfield) || preg_match('/^pct\./', $sortfield)) $sql .= $db->order($sortfield, $sortorder);
 	//$sql.= $db->plimit($limit+1,$offset);
 	//print $sql;
 
