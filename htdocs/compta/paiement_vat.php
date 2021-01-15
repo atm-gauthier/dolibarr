@@ -296,7 +296,8 @@ if ($action == 'create')
 		print '<td class="right">'.price($objp->amount - $sumpaid)."</td>";
 
 		print '<td class="center">';
-		if ($sumpaid < $objp->amount)
+
+		if ($sumpaid <> $objp->amount)
 		{
 			$namef = "amount_".$objp->id;
 			$nameRemain = "remain_".$objp->id;

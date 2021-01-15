@@ -304,9 +304,9 @@ if ($result)
 
     $colspan = 4;
     if (!empty($conf->banque->enabled)) $colspan++;
-    print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Total").'</td>';
+    print '<tr class="liste_total"><td colspan="'.($colspan-1).'">'.$langs->trans("Total").'</td>';
     print '<td class="right">'.price($total).'</td>';
-	print "<td>&nbsp;</td></tr>";
+	print "<td>&nbsp;</td><td>&nbsp;</td></tr>";
 
     print "</table>";
     print '</div>';

@@ -886,14 +886,14 @@ class Tva extends CommonObject
 			//$langs->load("mymodule");
 			$this->labelStatus[self::STATUS_UNPAID] = $langs->trans('BillStatusNotPaid');
 			$this->labelStatus[self::STATUS_PAID] = $langs->trans('Paid');
-			if ($status == self::STATUS_UNPAID && $alreadypaid > 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
 			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('BillStatusNotPaid');
 			$this->labelStatusShort[self::STATUS_PAID] = $langs->trans('Paid');
-			if ($status == self::STATUS_UNPAID && $alreadypaid > 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
 		}
 
 		$statusType = 'status1';
-		if ($status == 0 && $alreadypaid > 0) $statusType = 'status3';
+		if ($status == 0 && $alreadypaid <> 0) $statusType = 'status3';
 		if ($status == 1) $statusType = 'status6';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
