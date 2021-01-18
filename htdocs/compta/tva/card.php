@@ -158,7 +158,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PeriodEndDate")), null, 'errors');
 		$error++;
 	}
-	if (empty($object->type_payment) || $object->type_payment < 0)
+	if (!empty($auto_create_payment) && (empty($object->type_payment) || $object->type_payment < 0))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentMode")), null, 'errors');
 		$error++;
@@ -368,9 +368,11 @@ if ($action == 'create')
 				$("#auto_create_paiement").click(function() {
 					if($(this).is(":checked")) {
 						$("#label_fk_account").addClass("fieldrequired");
+						$("#label_type_payment").addClass("fieldrequired");
 						$(".hide_if_no_auto_create_payment").show();
 					} else {
 						$("#label_fk_account").removeClass("fieldrequired");
+						$("#label_type_payment").removeClass("fieldrequired");
 						$(".hide_if_no_auto_create_payment").hide();
 					}
 				});';
@@ -378,9 +380,11 @@ if ($action == 'create')
 		if($_REQUEST['action'] === 'add') { // form has been send but there is at least one error
 			if(empty($auto_create_payment)) {
 				print '$("#label_fk_account").removeClass("fieldrequired");
+					   $("#label_type_payment").removeClass("fieldrequired");
 					   $(".hide_if_no_auto_create_payment").hide();';
 			} else {
 				print '$("#label_fk_account").addClass("fieldrequired");
+					   $("#label_type_payment").addClass("fieldrequired");
 					   $(".hide_if_no_auto_create_payment").show();';
 			}
 		}
@@ -436,7 +440,7 @@ if ($action == 'create')
 	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount", "alpha").'"></td></tr>';
 
     // Type payment
-	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
+	print '<tr><td class="fieldrequired" id="label_type_payment">'.$langs->trans("PaymentMode").'</td><td>';
 	$form->select_types_paiements(GETPOST("type_payment"), "type_payment");
 	print "</td>\n";
 	print "</tr>";
