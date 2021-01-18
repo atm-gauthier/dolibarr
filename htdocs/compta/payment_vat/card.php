@@ -139,7 +139,7 @@ $h++;
 */
 
 
-dol_fiche_head($head, $hselected, $langs->trans("PaymentVAT"), -1, 'payment');
+dol_fiche_head($head, $hselected, $langs->trans("VATPayment"), -1, 'payment');
 
 /*
  * Deletion confirmation of payment
@@ -241,7 +241,7 @@ if ($resql)
 	$total = 0;
 	print '<br><table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans('TVA').'</td>';
+	print '<td>'.$langs->trans('VATDeclaration').'</td>';
     //print '<td>'.$langs->trans('Type').'</td>';
 	print '<td>'.$langs->trans('Label').'</td>';
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
