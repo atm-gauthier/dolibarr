@@ -500,6 +500,7 @@ PayedByThisPayment=Règlé par ce paiement
 ClosePaidInvoicesAutomatically=Classer "Payée" toutes les factures standard, d'acompte ou de remplacement quand le paiement est complet.
 ClosePaidCreditNotesAutomatically=Classer automatiquement à "Payé" les factures d'avoirs quand le remboursement est complet.
 ClosePaidContributionsAutomatically=Classer automatiquement à "Payé" la contribution sociale ou fiscale quand les paiements sont complets.
+ClosePaidVATAutomatically=Classer automatiquement à "Payée" la déclaration de TVA quand les paiements sont complets.
 AllCompletelyPayedInvoiceWillBeClosed=Toutes les factures avec un reste à payer nul seront automatiquement fermées au statut "Payé".
 ToMakePayment=Payer
 ToMakePaymentBack=Rembourser

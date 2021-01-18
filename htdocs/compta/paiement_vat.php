@@ -116,7 +116,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 
     		if (!$error)
     		{
-    		    $paymentid = $paiement->create($user, (GETPOST('closepaidcontrib') == 'on' ? 1 : 0));
+    		    $paymentid = $paiement->create($user, (GETPOST('closepaidvat') == 'on' ? 1 : 0));
                 if ($paymentid < 0)
                 {
                 	$error++;
@@ -335,7 +335,7 @@ if ($action == 'create')
 	print "</table>";
 
 	// Bouton Save payment
-	print '<br><div class="center"><input type="checkbox" checked name="closepaidcontrib"> '.$langs->trans("ClosePaidContributionsAutomatically");
+	print '<br><div class="center"><input type="checkbox" checked name="closepaidvat"> '.$langs->trans("ClosePaidVATAutomatically");
 	print '<br><input type="submit" class="button" name="save" value="'.$langs->trans('ToMakePayment').'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';

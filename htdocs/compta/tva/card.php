@@ -32,6 +32,10 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 
+if (!empty($conf->accounting->enabled)) {
+        include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+}
+
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'banks', 'bills'));
 
@@ -466,7 +470,7 @@ if ($action == 'create')
 
 	// Bouton Save payment
 	print '<tr class="hide_if_no_auto_create_payment"><td>';
-	print $langs->trans("ClosePaidTVAAutomatically");
+	print $langs->trans("ClosePaidVATAutomatically");
 	print '</td><td><input type="checkbox" checked value="1" name="closepaidtva"></td></tr>';
 
     print '</table>';
