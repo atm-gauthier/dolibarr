@@ -276,6 +276,34 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 	}
 }
 
+if ($action == 'update' && !$_POST["cancel"] && $user->rights->tax->charges->creer)
+{
+	$amount = price2num(GETPOST('amount'));
+
+	if (empty($amount))
+	{
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
+		$action = 'edit';
+	}
+	elseif (!is_numeric($amount))
+	{
+		setEventMessages($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentities("Amount")), null, 'errors');
+		$action = 'create';
+	}
+	else
+	{
+		$result = $object->fetch($id);
+
+		$object->amount		= price2num($amount);
+
+		$result = $object->update($user);
+		if ($result <= 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+}
+
 // Action clone object
 if ($action == 'confirm_clone' && $confirm != 'yes') { $action = ''; }
 
@@ -522,6 +550,12 @@ if ($id)
 		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteVAT'), $text, 'confirm_delete', '', '', 2);
 	}
 
+	if ($action == 'edit')
+	{
+		print "<form name=\"charge\" action=\"".$_SERVER["PHP_SELF"]."?id=$object->id&amp;action=update\" method=\"post\">";
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+	}
+
 	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment');
 
 	$morehtmlref = '<div class="refidno">';
@@ -558,7 +592,11 @@ if ($id)
 	//print dol_print_date($object->datev,'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
+	if ($action == 'edit') {
+		print '<tr><td class="fieldrequired">' . $langs->trans("Amount") . '</td><td><input name="amount" size="10" value="' . $object->amount . '"></td></tr>';
+	} else {
+		print '<tr><td>' . $langs->trans("Amount") . '</td><td>' . price($object->amount) . '</td></tr>';
+	}
 
 	// Mode of payment
 	print '<tr><td>';
@@ -722,6 +760,16 @@ if ($id)
 	print '<div class="clearboth"></div>';
 
 	dol_fiche_end();
+
+	if ($action == 'edit')
+	{
+		print '<div align="center">';
+		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+		print ' &nbsp; ';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</div>';
+		print "</form>\n";
+	}
 
 	/*
 	 * Action buttons
