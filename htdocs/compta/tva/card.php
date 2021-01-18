@@ -499,7 +499,7 @@ if ($id)
 		//$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_period', 'label' => $langs->trans("PeriodEndDate"), 'value' => -1);
 
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneTVA', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 240);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVAT', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 240);
 	}
 
 	if ($action == 'paid')

@@ -235,6 +235,7 @@ ACCOUNTING_ACCOUNT_CUSTOMER_Desc=Le compte comptable dédié défini sur la fich
 ACCOUNTING_ACCOUNT_SUPPLIER=Compte comptable utilisé pour les tiers fournisseur
 ACCOUNTING_ACCOUNT_SUPPLIER_Desc=Le compte de comptabilité dédié défini sur la fiche Tiers sera utilisé pour la comptabilité auxiliaire uniquement. Celui-ci sera utilisé pour le grand livre et comme valeur par défaut de la comptabilité auxiliaire si le compte de comptabilité fournisseur dédié au tiers n'est pas défini.
 ConfirmCloneTax=Confirmer le clonage de la charge sociale/fiscale
+ConfirmCloneVAT=Confirmer le clonage de la déclaration de TVA
 CloneTaxForNextMonth=Cloner pour le mois suivant
 SimpleReport=Rapport simple
 AddExtraReport=Rapports complémentaires (Ajouter le rapport client local et international)
