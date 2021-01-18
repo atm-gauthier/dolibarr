@@ -493,6 +493,7 @@ Cash=Cash
 Reported=Delayed
 DisabledBecausePayments=Not possible since there are some payments
 CantRemovePaymentWithOneInvoicePaid=Can't remove payment since there is at least one invoice classified paid
+CantRemovePaymentVATPaid=Can't remove payment since VAT declaration is classified paid
 ExpectedToPay=Expected payment
 CantRemoveConciliatedPayment=Can't remove reconciled payment
 PayedByThisPayment=Paid by this payment

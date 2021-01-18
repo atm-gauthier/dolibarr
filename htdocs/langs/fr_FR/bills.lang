@@ -494,6 +494,7 @@ Cash=Liquide
 Reported=Différé
 DisabledBecausePayments=Non disponible car il existe des paiements
 CantRemovePaymentWithOneInvoicePaid=Suppression impossible quand il existe au moins une facture classée payée.
+CantRemovePaymentVATPaid=Suppression impossible quand la déclaration de TVA est classée payée.
 ExpectedToPay=Paiement attendu
 CantRemoveConciliatedPayment=Suppression d'un paiement rapproché impossible
 PayedByThisPayment=Règlé par ce paiement

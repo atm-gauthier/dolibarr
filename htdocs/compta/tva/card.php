@@ -235,8 +235,9 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 if ($action == 'confirm_delete' && $confirm == 'yes')
 {
     $result = $object->fetch($id);
+	$totalpaye = $object->getSommePaiement();
 
-	if ($object->rappro == 0)
+	if (empty($totalpaye))
 	{
 	    $db->begin();
 
@@ -271,8 +272,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 	}
 	else
 	{
-		$mesg = 'Error try do delete a line linked to a conciliated bank transaction';
-		setEventMessages($mesg, null, 'errors');
+		setEventMessages($langs->trans('DisabledBecausePayments'), null, 'errors');
 	}
 }
 
@@ -775,7 +775,7 @@ if ($id)
 	 * Action buttons
 	 */
 	print "<div class=\"tabsAction\">\n";
-	if ($object->rappro == 0)
+	if ($action != 'edit')
 	{
 		// Reopen
 		if ($object->paye && $user->rights->tax->charges->creer)
@@ -807,18 +807,14 @@ if ($id)
 			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/compta/tva/card.php", 1)."?id=$object->id&amp;action=clone\">".$langs->trans("ToClone")."</a></div>";
 		}
 
-		if (!empty($user->rights->tax->charges->supprimer))
+		if (!empty($user->rights->tax->charges->supprimer) && empty($totalpaye))
 		{
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
 		}
 		else
 		{
-			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("DisabledBecausePayments"))).'">'.$langs->trans("Delete").'</a></div>';
 		}
-	}
-	else
-	{
-		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a></div>';
 	}
 	print "</div>";
 }
