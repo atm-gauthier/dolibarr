@@ -232,7 +232,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$action = 'create';
 }
 
-if ($action == 'delete')
+if ($action == 'confirm_delete' && $confirm == 'yes')
 {
     $result = $object->fetch($id);
 
@@ -512,8 +512,14 @@ if ($id)
 
 	if ($action == 'paid')
 	{
-		$text = $langs->trans('ConfirmPayTVA');
-		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans('PayTVA'), $text, "confirm_paid", '', '', 2);
+		$text = $langs->trans('ConfirmPayVAT');
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans('PayVAT'), $text, "confirm_paid", '', '', 2);
+	}
+
+	if ($action == 'delete')
+	{
+		$text = $langs->trans('ConfirmDeleteVAT');
+		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteVAT'), $text, 'confirm_delete', '', '', 2);
 	}
 
 	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment');
